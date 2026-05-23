@@ -11,16 +11,29 @@ namespace ListaDeContactos.Api.Controllers
     {
         private readonly AppDbContext _context;
 
-        public ContactoController(
-            AppDbContext context)
+        private const string API_KEY = "123456";
+
+        public ContactoController(AppDbContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Contacto>>> Get()
+        public async Task<IActionResult> Get()
         {
-            return await _context.Contactos.ToListAsync();
+            if (!Request.Headers.TryGetValue("x-api-key", out var apiKey))
+            {
+                return Unauthorized("API Key requerida");
+            }
+
+            if (apiKey != API_KEY)
+            {
+                return Unauthorized("API Key inválida");
+            }
+
+            var lista = await _context.Contactos.ToListAsync();
+
+            return Ok(lista);
         }
     }
 }
