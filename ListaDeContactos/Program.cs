@@ -8,7 +8,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -22,7 +24,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
-        Description = "API Key",
+        Description = "API Key requerida en el header: x-api-key",
         Name = "x-api-key",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey
@@ -31,10 +33,10 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Angular",
+    options.AddPolicy("AngularPolicy",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:4200")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -42,11 +44,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("Angular");
-
 app.UseSwagger();
-
 app.UseSwaggerUI();
+
+app.UseCors("AngularPolicy");
 
 app.UseAuthorization();
 
