@@ -1,0 +1,6 @@
+@ListaDeContactos_HostAddress = http://localhost:5264
+
+GET {{ListaDeContactos_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
